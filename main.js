@@ -4,7 +4,7 @@ function HashMap() {
     let capacity = 16;
     let loadFactor = 0.75;
 
-    instantiateBucket();
+    // instantiateBucket();
 
     function instantiateBucket() {
         for (let i = 0; i < capacity; i++) {
@@ -25,7 +25,7 @@ function HashMap() {
 
         for (let i = 0; i < buckets.length; i++){
             if (buckets[i]) {
-                const node = {key: buckets[i].key, value: buckets[i].value, next: null};
+                const node = {key: buckets[i].key, value: buckets[i].value, next: buckets[i].next};
                 const index = hash(node.key);
                 newBucket[index] = node;
             }
@@ -47,29 +47,41 @@ function HashMap() {
     };
 
     function set(key, value) {
-        // takes two arguments, the first is a key and the second is a value that is assigned to this key. If a key already exists, then the old value is overwritten or we can say that we update the key’s value (e.g. Carlos is our key but it is called twice: once with value I am the old value., and once with value I am the new value.. From the logic stated above, Carlos should contain only the latter value).
         const node = {key: key, value: value, next: null};
         const index = hash(key);
         if (length() >= capacity * loadFactor) {
             expand();
         }
-        // comapare keys against bucket to check if its a duplicate -- if duplicate -> override
+        
         if (buckets[index]){
-            // console.log("Bucket full! Scrapping...");
+            let currentNode = buckets[index];
+
+            if (currentNode.key == node.key) {
+                currentNode.value = node.value;
+                return;
+            }
+
+            while (currentNode.next) {
+                if (currentNode.key == node.key) {
+                    console.log("same");
+                    currentNode.value = node.value;
+                    return;
+                } else {
+                    currentNode = currentNode.next;
+                }
+            }
+            currentNode.next = node;
         } else {
             buckets[index] = node;
         }
     };
 
     function get(key) {
-        // takes one argument as a key and returns the value that is assigned to this key. If a key is not found, return null
         const index = hash(key);
         return (buckets[index])
     };
 
     function has(key) {
-        // takes a key as an argument and returns true or false based on whether or not the key is in the hash map.
-
         if (get(key))
             return true;
         else
@@ -78,7 +90,6 @@ function HashMap() {
     };
 
     function remove(key) {
-        // takes a key as an argument. If the given key is in the hash map, it should remove the entry with that key and return true. If the key isn’t in the hash map, it should return false.
         if (has(key)){
             let index = hash(key);
             buckets[index] = null;
@@ -89,11 +100,18 @@ function HashMap() {
     };
 
     function length() {
-        // returns the number of stored keys in the hash map. 
-
-        // Needs expansion once adding linked list
         let length = 0;
-        buckets.forEach((item) => {if(item) length++});
+        buckets.forEach((item) => {
+            if(item){
+                let currentNode = item;
+                while (currentNode.next){
+                    currentNode = currentNode.next;
+                    length++;
+                };
+                length++;
+            }
+                 
+        });
 
         return length;
     };
@@ -105,7 +123,6 @@ function HashMap() {
     };
 
     function keys() {
-        // returns an array containing all the keys inside the hash map.
         let arr = [];
         buckets.forEach((item) => {
             if (item) {
@@ -116,7 +133,6 @@ function HashMap() {
     };
 
     function values() {
-        // returns an array containing all the values.
         let arr = [];
         buckets.forEach((item) => {
             if (item) {
@@ -127,7 +143,6 @@ function HashMap() {
     };
 
     function entries() {
-        // returns an array that contains each key, value pair. Example: [[firstKey, firstValue], [secondKey, secondValue]]
         let arr = [];
         buckets.forEach((item) => {
             if (item) {
@@ -136,29 +151,24 @@ function HashMap() {
         })
         return arr;
     }
-    //expand buckets based on load factor 0.75 - 1.00
     return { print, hash, set, get, has, remove, length, clear, keys, values, entries };
 }
 
 
 const test = HashMap();
-test.set("jinx", 69);
-console.log(test.get("jinx"));
 
+test.set('banana', 'yellow');
+test.set('carrot', 'orange');
+test.set('dog', 'brown');
+test.set('elephant', 'gray');
+test.set('frog', 'green');
+test.set('grape', 'purple');
+test.set('hat', 'black');
+test.set('ice cream', 'white');
+test.set('jacket', 'blue');
+test.set('kite', 'pink');
+test.set('lion', 'golden');
+test.set('banana', 'pink');
+test.print();
 
-// test.hash('apple', 'red');
-// test.set('banana', 'yellow');
-// test.set('carrot', 'orange');
-// test.set('dog', 'brown');
-// test.set('elephant', 'gray');
-// test.set('frog', 'green');
-// test.set('grape', 'purple');
-// test.set('hat', 'black');
-// test.set('ice cream', 'white');
-// test.set('jacket', 'blue');
-// test.set('kite', 'pink');
-// test.set('lion', 'golden');
-
-
-// console.log(test.entries());
 console.log("end");
