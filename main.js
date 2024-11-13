@@ -168,7 +168,6 @@ test.set('ice cream', 'white');
 test.set('jacket', 'blue');
 test.set('kite', 'pink');
 test.set('lion', 'golden');
-test.set('banana', 'pink');
 test.print();
 
 console.log("end");
